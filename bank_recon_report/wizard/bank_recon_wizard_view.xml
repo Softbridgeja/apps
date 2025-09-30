@@ -1,0 +1,39 @@
+<odoo>
+    <record id="view_bank_recon_wizard_form" model="ir.ui.view">
+        <field name="name">Bank Reconciliation Report Wizard</field>
+        <field name="model">bank.recon.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Bank Reconciliation Report">
+                <group>
+                    <group>
+                        <field name="date_from"/>
+                        <field name="date_to"/>
+                        <field name="journal_id"/>
+                    </group>
+                    <group>
+                        <field name="bank_balance"/>
+                        <field name="company_currency_id" invisible="1"/>
+                    </group>
+                </group>
+				<footer>
+					<button name="print_report" string="PDF" type="object" class="btn-primary"/>
+<button string="Cancel" class="btn-secondary" special="cancel"/>
+				</footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_bank_recon_wizard" model="ir.actions.act_window">
+        <field name="name">Bank Reconciliation Report</field>
+        <field name="res_model">bank.recon.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- menu entry inside Accounting > Reporting > PDF Reports -->
+    <menuitem id="menu_bank_recon_report"
+              name="Bank Reconciliation Report"
+              parent="account.menu_finance_reports"
+              action="action_bank_recon_wizard"
+              sequence="30"/>
+</odoo>

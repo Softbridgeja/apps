@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_bank_recon_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="record">
+                <div class="page">
+                    <h2 class="text-center">Bank Reconciliation Report</h2>
+                    <div class="row mt-4">
+                        <div class="col-6">
+                            <strong>Journal:</strong> <span t-esc="record.report_data['journal']"/><br/>
+                            <strong>Period:</strong>
+                            <span t-esc="record.report_data['date_from']"/> -
+                            <span t-esc="record.report_data['date_to']"/>
+                        </div>
+                    </div>
+
+                    <table class="table table-sm mt-4">
+                        <tbody>
+                            <tr>
+                                <td><strong>Opening GL balance</strong></td>
+                                <td class="text-end">
+                                    <span t-esc="record.report_data['opening']"
+                                          t-options="{'widget': 'monetary',
+                                                     'display_currency': record.company_currency_id}"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Add: Debits per GL</td>
+                                <td class="text-end">
+                                    <span t-esc="record.report_data['debit']"
+                                          t-options="{'widget': 'monetary',
+                                                     'display_currency': record.company_currency_id}"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Less: Credits per GL</td>
+                                <td class="text-end">
+                                    <span t-esc="record.report_data['credit']"
+                                          t-options="{'widget': 'monetary',
+                                                     'display_currency': record.company_currency_id}"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Unpresented checks</td>
+                                <td class="text-end">
+                                    <span t-esc="record.report_data['unp_chks']"
+                                          t-options="{'widget': 'monetary',
+                                                     'display_currency': record.company_currency_id}"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Unpresented lodgements</td>
+                                <td class="text-end">
+                                    <span t-esc="record.report_data['unp_lodgs']"
+                                          t-options="{'widget': 'monetary',
+                                                     'display_currency': record.company_currency_id}"/>
+                                </td>
+                            </tr>
+                            <tr class="table-secondary">
+                                <td><strong>Closing GL balance</strong></td>
+                                <td class="text-end">
+                                    <strong><span t-esc="record.report_data['closing']"
+                                          t-options="{'widget': 'monetary',
+                                                     'display_currency': record.company_currency_id}"/></strong>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Bank statement balance</strong></td>
+                                <td class="text-end">
+                                    <strong><span t-esc="record.report_data['bank_bal']"
+                                          t-options="{'widget': 'monetary',
+                                                     'display_currency': record.company_currency_id}"/></strong>
+                                </td>
+                            </tr>
+                            <tr class="table-danger">
+                                <td><strong>Variance (Book – Bank)</strong></td>
+                                <td class="text-end">
+                                    <strong><span t-esc="record.report_data['variance']"
+                                          t-options="{'widget': 'monetary',
+                                                     'display_currency': record.company_currency_id}"/></strong>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                <div class="mt32">
+                        <h3>GL Debits (Period)</h3>
+                        <table class="table table-sm table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Move</th>
+                                    <th>Partner</th>
+                                    <th>Label</th>
+                                    <th class="text-end">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="record.get_gl_lines('debit')" t-as="l">
+                                    <tr>
+                                        <td><span t-esc="l['date']"/></td>
+                                        <td><span t-esc="l['move_name']"/></td>
+                                        <td><span t-esc="l['partner']"/></td>
+                                        <td><span t-esc="l['label']"/></td>
+                                        <td class="text-end">
+                                            <span t-esc="l['debit']"
+                                                  t-options="{'widget': 'monetary', 'display_currency': record.company_currency_id}"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="mt16">
+                        <h3>GL Credits (Period)</h3>
+                        <table class="table table-sm table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Move</th>
+                                    <th>Partner</th>
+                                    <th>Label</th>
+                                    <th class="text-end">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="record.get_gl_lines('credit')" t-as="l">
+                                    <tr>
+                                        <td><span t-esc="l['date']"/></td>
+                                        <td><span t-esc="l['move_name']"/></td>
+                                        <td><span t-esc="l['partner']"/></td>
+                                        <td><span t-esc="l['label']"/></td>
+                                        <td class="text-end">
+                                            <span t-esc="l['credit']"
+                                                  t-options="{'widget': 'monetary', 'display_currency': record.company_currency_id}"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+</div>
+            </t>
+        </t>
+    </template>
+	
+		<!-- Excel report -->
+
+    <record id="action_bank_recon_report" model="ir.actions.report">
+        <field name="name">Bank Reconciliation (PDF)</field>
+        <field name="model">bank.recon.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">bank_recon_report.report_bank_recon_document</field>
+        <field name="print_report_name">'Bank_Recon_' + (object.journal_id.name or '')</field>
+    </record>
+
+</odoo>

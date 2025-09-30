@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="action_bank_recon_wizard" model="ir.actions.act_window">
+        <field name="name">Bank Reconciliation</field>
+        <field name="res_model">bank.recon.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{}</field>
+    </record>
+
+    <menuitem id="menu_bank_recon_report"
+              name="Bank Reconciliation"
+              parent="account.menu_finance_reports"
+              action="action_bank_recon_wizard"
+              sequence="200"/>
+</odoo>
